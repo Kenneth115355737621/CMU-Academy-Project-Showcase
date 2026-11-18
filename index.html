@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title id="page-title">CMU Academy Project Overview</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card-bg: #ffffff;
+      --text-main: #1b2233;
+      --text-muted: #6b7385;
+      --border: #e6e9f2;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-main);
+      background: var(--bg);
+      background-image: 
+        radial-gradient(1000px 500px at 10% 0%, #e0e8ff 0%, transparent 60%),
+        radial-gradient(800px 500px at 90% 10%, #ffe8f0 0%, transparent 50%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+
+    /* ---------- View Containers ---------- */
+    .view {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- Dashboard Layout ---------- */
+    .dashboard-header {
+      text-align: center;
+      padding: 80px 20px 50px;
+    }
+    .dashboard-header h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .rule {
+      width: 70px;
+      height: 5px;
+      margin: 24px auto 0;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #4f6bed, #b45cf0, #ff7a9c);
+    }
+
+    .dashboard-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    /* ---------- Dashboard Cards ---------- */
+    .menu-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(24, 32, 56, 0.03);
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .menu-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px -10px rgba(24, 32, 56, 0.15);
+      border-color: transparent;
+    }
+    .menu-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: var(--accent, #4f6bed);
+      opacity: 0.8;
+    }
+    .menu-card-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--accent, #4f6bed);
+      color: white;
+      font-weight: 800;
+      font-size: 1.2rem;
+      box-shadow: 0 8px 16px -6px var(--accent, #4f6bed);
+    }
+    .menu-card h2 { margin: 0; font-size: 1.4rem; font-weight: 700; }
+    .menu-card p { margin: 0; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; flex-grow: 1; }
+    .menu-card .action-text {
+      font-weight: 600;
+      color: var(--accent, #4f6bed);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.95rem;
+    }
+    .menu-card:hover .action-text span { transform: translateX(4px); }
+
+    /* ---------- Viewer Layout ---------- */
+    .viewer-header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 20px; }
+    .back-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+    .back-btn:hover { background: #f0f3fa; transform: translateX(-2px); }
+    .viewer-title { font-weight: 800; font-size: 1.4rem; color: var(--text-main); }
+
+    .viewer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 24px 60px;
+      gap: 32px; 
+    }
+    
+    /* ---------- Common Box Styling ---------- */
+    .project-box, .info-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px -10px rgba(24, 32, 56, 0.15);
+      width: 100%;
+    }
+
+    /* ---------- Project Box (Fixed Size) ---------- */
+    .project-box {
+      max-width: 442px; 
+      padding: 16px;
+      line-height: 0;
+    }
+    .project-box iframe {
+      width: 410px;
+      height: 460px;
+      max-width: 100%;
+      border: 0;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    /* ---------- Info Panels (Grows with Window) ---------- */
+    .info-panel {
+      max-width: 900px; 
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.6;
+      border-top: 6px solid var(--accent, #4f6bed);
+      animation: fadeIn 0.5s ease forwards;
+    }
+    .info-panel-title {
+      margin: 0 0 16px 0;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    .info-panel-content {
+      color: var(--text-muted);
+      font-size: 1rem;
+      flex-grow: 1;
+    }
+
+    /* ---------- Content Inside Panels ---------- */
+    .info-panel-content p { margin-top: 0; margin-bottom: 12px; }
+    .info-panel-content ul, .info-panel-content ol { padding-left: 20px; margin-bottom: 12px; }
+    .info-panel-content li { margin-bottom: 6px; }
+    .info-panel-content a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .info-panel-content a:hover { text-decoration: underline; }
+
+    /* Code block styling */
+    pre {
+      margin: 0;
+      box-sizing: border-box;
+    }
+    pre code {
+      white-space: pre;
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 400px;
+      display: block;
+      max-width: 100%;
+      box-sizing: border-box;
+      padding: 16px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      background: #1f2937;
+      color: #e5e7eb;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .dashboard-header { padding: 50px 20px 30px; }
+      .viewer-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .header-left { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .project-box iframe { width: 100%; }
+      .info-panel { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= DASHBOARD VIEW ================= -->
+  <div id="dashboard-view" class="view active">
+    <header class="dashboard-header">
+      <h1>CMU Academy Project Overview</h1>
+      <div class="rule"></div>
+    </header>
+    <main class="dashboard-grid" id="dashboard-grid"></main>
+  </div>
+
+  <!-- ================= VIEWER VIEW ================= -->
+  <div id="viewer-view" class="view">
+    <header class="viewer-header">
+      <div class="header-left">
+        <button class="back-btn" onclick="closeViewer()">
+          <span>←</span> Back to Dashboard
+        </button>
+        <div id="viewer-title" class="viewer-title">Unit Title</div>
+      </div>
+    </header>
+
+    <main class="viewer-content">
+      <!-- The Project Box -->
+      <div class="project-box">
+        <div id="iframe-target"></div>
+      </div>
+      
+      <!-- Info Panels -->
+      <div id="panels-container" style="display: contents;"></div>
+    </main>
+  </div>
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    const units = [
+      {
+        id: 1,
+        title: "Unit 1 Project",
+        desc: "Creating Drawings - The Basics of a Page",
+        url: "https://academy.cs.cmu.edu/sharing/tanPanda791854/embed",
+        color: "#4f6bed", // Blue Theme
+        panels: [
+          {
+            title: "About This Project",
+            content: "This project is an attempt using CMU academy code to recreate a scene in an animation series serielized on Youtube, link here, scene at 2:10 <a href='https://www.youtube.com/watch?v=FcQlQAs5EDM&t=89s' target='_blank'>https://www.youtube.com/watch?v=FcQlQAs5EDM&t=89s</a>"
+          },
+          {
+            title: "Why I Made This Project",
+            content: "I chose to create this scene is because this scene originated from the latest video in the animated series when I made this project, and since it contained stick figures with hard shading methods, I challenged myself to try to recreate the scene the best I can."
+          },
+          {
+            title: "Project Code",
+            content: `<pre><code>#Background
+Polygon(0,0,86,125,301,125,400,0,fill=rgb(30,39,20),border='black')
+Polygon(0,0,86,125,301,125,400,0,fill=rgb(50,60,40),opacity=70,border='black')
+Polygon(0,0,86,125,301,125,400,0,fill='grey',opacity=20,border='black')
+Polygon(0,0,86,125,301,125,400,0,fill=gradient('grey','black','black',start='top'),opacity=20,border='black')
+Rect(86,125,215,87,fill=rgb(30,39,20),border='black')
+Rect(86,125,215,87,fill=rgb(50,60,40),opacity=70,border='black')
+Rect(86,125,215,87,fill='grey',opacity=20,border='black')
+Rect(86,125,215,87,fill='black',opacity=20)
+Line(86,146,301,146,lineWidth=43,fill=rgb(30,39,20),dashes=(10,5),opacity=40)
+Line(86,189,301,189,lineWidth=43,fill=rgb(30,39,20),dashes=(10,5),opacity=40)
+Line(193,125,193,212,lineWidth=215,fill=rgb(50,60,40),dashes=(10,5),opacity=40)
+Polygon(400,0,301,125,301,212,400,278,fill=rgb(30,39,20),border='black')
+Polygon(400,0,301,125,301,212,400,278,fill=rgb(50,60,40),opacity=70,border='black')
+Polygon(400,0,301,125,301,212,400,278,fill='grey',opacity=20,border='black')
+Polygon(400,0,301,125,301,212,400,278,fill=gradient('grey','black','black',start='right'),opacity=20,border='black')
+Polygon(0,0,86,125,86,212,0,278,fill=rgb(30,39,20),border='black')
+Polygon(0,0,86,125,86,212,0,278,fill=rgb(50,60,40),opacity=70,border='black')
+Polygon(0,0,86,125,86,212,0,278,fill='grey',opacity=20,border='black')
+Polygon(0,0,86,125,86,212,0,278,fill=gradient('white','black','black',start='bottom'),opacity=20,border='black')
+Polygon(0,0,86,125,86,212,0,278,fill=gradient('white','black','black',start='left'),opacity=20,border='black')
+Polygon(86,212,0,278,0,400,400,400,400,278,301,212,fill=rgb(30,39,20),border='black')
+Polygon(86,212,0,278,0,400,400,400,400,278,301,212,fill=rgb(50,60,40),opacity=70,border='black')
+Polygon(86,212,0,278,0,400,400,400,400,278,301,212,fill='grey',opacity=20,border='black')
+Polygon(86,212,0,278,0,400,400,400,400,278,301,212,fill=gradient('white','black',start='bottom'),opacity=20,border='black')
+#Emerald
+Polygon(124,158,149,160,163,172,157,207,143,215,121,211,110,195,111,174,fill='black',opacity=20,border='black')
+Polygon(124,154,149,156,163,170,157,205,143,213,121,209,110,193,111,172,fill=rgb(19,160,69),border='black')
+Polygon(129,171,126,193,139,198,142,174,fill=rgb(19,160,69),border='black')
+Line(124,154,129,171)
+Line(111,174,129,171)
+Line(110,193,126,193)
+Line(121,209,126,193)
+Line(143,213,139,198)
+Line(157,205,139,198)
+Line(163,170,142,174)
+Line(149,156,142,174)
+Polygon(124,154,149,156,163,170,157,205,143,213,121,209,110,193,111,172,fill=gradient('white','black'),opacity=20,border='black')
+#Pickaxe
+Line(236,233,269,196,lineWidth=10,fill=rgb(128,102,49))
+Line(236,233,269,196,lineWidth=10,fill=rgb(128,64,192),opacity=40)
+Polygon(233,191,267,198,280,215,263,202,fill=rgb(112,225,198))
+Polygon(233,191,267,198,280,215,263,202,fill=rgb(128,64,192),opacity=40)
+#Steak
+Circle(181,264,15,fill=rgb(93,48,19),border='black')
+Circle(178,270,15,fill=rgb(93,48,19),border='black')
+Circle(184,257,15,fill=rgb(93,48,19),border='black')
+Circle(187,252,15,fill=rgb(93,48,19),border='black')
+Circle(175,276,15,fill=rgb(93,48,19),border='black')
+Circle(187,252,15,fill=rgb(78,41,25),opacity=50)
+Circle(175,276,15,fill=rgb(78,41,25),opacity=50)
+Circle(184,257,15,fill=rgb(78,41,25),opacity=50)
+Circle(181,264,15,fill=rgb(78,41,25),opacity=50)
+Circle(178,270,15,fill=rgb(78,41,25),opacity=50)
+Line(168,276,182,285,fill=rgb(186,115,81))
+Line(167,266,186,275,fill=rgb(186,115,81))
+Line(173,259,192,266,fill=rgb(186,115,81))
+Line(177,250,194,258,fill=rgb(186,115,81))
+#Nether Star
+Star(200,189,25,4,roundness=50,fill=rgb(201,214,215),border=rgb(86,106,106),borderWidth=3)
+Circle(200,189,4,fill=rgb(253,255,168))
+#Gunpowder
+Arc(164,213,50,50,142,72,fill=rgb(139,129,129),border=rgb(101,87,87))
+#Cobweb
+Line(132,33,229,94,fill='white')
+Line(229,33,132,94,fill='white')
+Polygon(180,33,132,64,180,94,229,64,fill=None,border='white')
+Circle(179,64,15,fill=None,border='white')
+Label('hgehsse',157,65,font='cursive',fill='white')
+Label('hgehsse',203,60,font='cursive',fill='white')
+Label('hgehsse',176,47,font='cursive',fill='white')
+Label('hgehsse',181,79,font='cursive',fill='white')
+Label('hgehsse',173,70,font='cursive',fill='white')
+Label('hgehsse',187,57,font='cursive',fill='white')
+Label('hgehsse',160,56,font='cursive',fill='white')
+Label('hgehsse',193,50,font='cursive',fill='white')
+Label('hgehsse',195,73,font='cursive',fill='white')
+Label('hgehsse',204,72,font='cursive',fill='white')
+#Red Stick Figure
+Line(277,240,246,255,fill=rgb(175,51,26),lineWidth=30)
+Circle(277,240,15,fill=rgb(175,51,26))
+Circle(246,255,15,fill=rgb(175,51,26))
+Line(296,268,246,255,fill=rgb(175,51,26),lineWidth=30)
+Line(322,251,242,321,fill=rgb(175,51,26),lineWidth=30)
+Line(322,251,242,321,fill=gradient('white','black','black',start='bottom-left'),lineWidth=30,opacity=10)
+Line(202,326,352,340,fill=rgb(175,51,26),lineWidth=30)
+Circle(242,321,15,fill=rgb(175,51,26))
+Line(202,326,352,340,fill=gradient('white','black','black',start='bottom-left'),lineWidth=30,opacity=10)
+Circle(202,326,15,fill=rgb(175,51,26))
+Circle(202,326,15,fill='white',opacity=10)
+Circle(352,340,15,fill=rgb(175,51,26))
+Circle(340,293,61,fill=rgb(175,51,26))
+#Blue Stick Figure
+Line(123,242,131,248,lineWidth=30,fill=rgb(89,185,232))
+Line(123,242,131,248,lineWidth=30,fill='black',opacity=10)
+Circle(131,248,15,fill=rgb(89,185,232))
+Circle(123,242,15,fill=rgb(89,185,232))
+Circle(131,248,15,fill='black',opacity=10)
+Circle(123,242,15,fill='black',opacity=10)
+Line(123,242,106,255,lineWidth=30,fill=rgb(89,185,232))
+Line(123,242,106,255,lineWidth=30,fill='black',opacity=10)
+Line(67,262,106,255,lineWidth=30,fill=rgb(89,185,232))
+Circle(106,255,15,fill=rgb(89,185,232))
+Line(67,262,172,309,lineWidth=30,fill=rgb(89,185,232))
+Line(67,262,172,309,lineWidth=30,fill=gradient('white','black','black',start='bottom-right'),opacity=10)
+Circle(172,309,15,fill=rgb(89,185,232))
+Line(90,343,172,309,lineWidth=30,fill=rgb(89,185,232))
+Circle(90,343,15,fill=rgb(89,185,232))
+Line(67,262,9,330,lineWidth=30,fill=rgb(89,185,232))
+Line(67,262,9,330,lineWidth=30,fill=gradient('white','black','black',start='bottom-left'),opacity=10)
+Circle(9,330,15,fill=rgb(89,185,232))
+Line(9,330,104,371,lineWidth=30,fill=rgb(89,185,232))
+Circle(104,371,15,fill=rgb(89,185,232))
+Circle(67,262,61,fill=rgb(89,185,232))</code></pre>`
+          }
+        ]
+      },
+      {
+        id: 2,
+        title: "Unit 2 Project",
+        desc: "Functions, Mouse Events, and Properties",
+        url: "https://academy.cs.cmu.edu/sharing/ghostWhiteHorse858912/embed",
+        color: "#b45cf0", // Purple Theme
+        panels: [
+          {
+            title: "About This Project",
+            content: "This project is a game inspired by a popular game Cookie Clicker, I switched the original cookie into a Roblox icon and the currencies into standard Roblox currencies. This game only has the basic functions of incremental growth and serves as a lego version of the actual game."
+          },
+          {
+            title: "Why I Made This Project",
+            content: "I mainly made this project because of recent time spent playing on Roblox and the lego version of cookie clicker of the CMU academy practice questions make me tempted to create a better lego version while not copying the entire cookie clicker idea."
+          },
+          {
+            title: "Project Code",
+            content: `<pre><code>#Background
+app.background = gradient('lightSteelBlue','cornflowerBlue','skyBlue','lightSkyBlue','lightBlue','gainsboro','snow','ghostWhite',start='bottom-right')
+
+#Controller
+controlShake = Label(0,0,-50,visible=True)
+
+#Title
+title = Label('Roblox Clicker',150,58,size=32,font='orbitron',rotateAngle=-3)
+
+#Currency Bottom Stuff
+Rect(-2,330,404,400,fill='lightSteelBlue',border='black')
+moneyLabel = Label('$',20,365,size=65,font='arial',fill='lime')
+moneyAmount = Label(0,moneyLabel.right+5,moneyLabel.centerY,align='left',size=55)
+tixLabelBG = Rect(161,365,60,30,align='center',fill='gold',rotateAngle=-40)
+tixLabelInner = Rect(161,365,55,27,align='center',rotateAngle=-40,fill='sienna',border='black',borderWidth=1)
+tixLabelText = Label('TIX',161,365,align='center',rotateAngle=-40,fill='white',size=25,bold=True)
+tixAmount = Label(0,tixLabelBG.right+5,tixLabelBG.centerY,align='left',size=55)
+robuxLabelBG = RegularPolygon(317,365,30,6,fill=gradient('khaki','darkKhaki'))
+robuxLabelInner = RegularPolygon(robuxLabelBG.centerX,robuxLabelBG.centerY,25,6,fill='lightSteelBlue')
+robuxLabelCoreBG = RegularPolygon(robuxLabelBG.centerX,robuxLabelBG.centerY,20,6,fill=gradient('khaki','darkKhaki'))
+robuxLabelCore = Rect(robuxLabelBG.centerX,robuxLabelBG.centerY,10,10,fill='lightSteelBlue',align='center')
+robuxAmount = Label(0,robuxLabelBG.right+5,robuxLabelBG.centerY,align='left',size=50)
+
+#Roblox Icon
+robloxIconBackground = Rect(125,215,180,180,fill=rgb(61,93,244),align='center',rotateAngle=-1)
+robloxIconOutside = Rect(robloxIconBackground.centerX,robloxIconBackground.centerY,125,130,rotateAngle=19,align='center',fill=gradient('lightBlue','white',start='bottom-right'))
+robloxIconInside = Rect(robloxIconBackground.centerX,robloxIconBackground.centerY,40,40,rotateAngle=19,align='center',fill=rgb(61,93,244))
+
+#Currency Gain Pop-up
+plusMoney = Label('+',184,277,size=65,font='cursive',fill='lime',visible=False)
+plusTix = Label('+',43,148,size=65,font='cursive',fill='lime',visible=False)
+
+#Currency Pop-up
+money = Label('$',204,272,size=35,font='arial',fill='lime',visible=False)
+tixBG = Rect(75,141,40,20,align='center',fill='gold',rotateAngle=-3,visible=False)
+tixInner = Rect(75,141,35,17,align='center',rotateAngle=-3,fill='sienna',border='black',borderWidth=1,visible=False)
+tixText = Label('TIX',75,141,align='center',rotateAngle=-3,fill='white',size=15,bold=True,visible=False)
+
+#Shop Icon
+exchange1BG = Rect(249,117,131,53,fill='lightSteelBlue',border='black',borderWidth=1)
+exchange2BG = Rect(249,190,131,53,fill='lightSteelBlue',border='black',borderWidth=1)
+exchange3BG = Rect(249,263,131,53,fill='lightSteelBlue',border='black',borderWidth=1)
+exchange1Text = Label('TIX --> Robux',exchange1BG.centerX,exchange1BG.centerY,font='orbitron',size=15)
+exchange2Text = Label('$ Money --> Robux',exchange2BG.centerX,exchange2BG.centerY,font='orbitron',size=12)
+exchange3Text = Label('Robux --> TIX',exchange3BG.centerX,exchange3BG.centerY,font='orbitron',size=15)
+
+#Change In Size
+def onMousePress(mouseX,mouseY):
+    if mouseX >= 249 and mouseX <= 380 and mouseY >= 117 and mouseY <=170:
+        if tixAmount.value>=10:    
+            robuxAmount.value += tixAmount.value//10
+            tixAmount.value = tixAmount.value%10
+    elif mouseX >= 249 and mouseX <= 380 and mouseY >= 190 and mouseY <=243:
+        if moneyAmount.value>=30:    
+            robuxAmount.value += moneyAmount.value//30
+            moneyAmount.value = moneyAmount.value%30
+    elif mouseX >= 249 and mouseX <= 380 and mouseY >= 263 and mouseY <=316:
+        tixAmount.value += robuxAmount.value*10
+        robuxAmount.value = 0
+    else:
+        #Height
+        robloxIconBackground.height+=5
+        robloxIconOutside.height+=5
+        
+        #Width
+        robloxIconBackground.width+=5
+        robloxIconOutside.width+=5
+        
+        #Show Icons
+        plusMoney.visible=True
+        plusTix.visible=True
+        money.visible=True
+        tixBG.visible=True
+        tixInner.visible=True
+        tixText.visible=True
+        
+        #Add Stuff
+        if moneyAmount.value < 999:
+            moneyAmount.value += 3
+        if tixAmount.value < 999:
+            tixAmount.value += 1
+            
+    #Reset Icon
+    robloxIconBackground.centerX=125
+    robloxIconBackground.centerY=215
+    robloxIconOutside.centerX=robloxIconBackground.centerX
+    robloxIconOutside.centerY=robloxIconBackground.centerY
+    robloxIconInside.centerX=robloxIconBackground.centerX
+    robloxIconInside.centerY=robloxIconBackground.centerY
+    moneyAmount.left=moneyLabel.right+5
+    tixAmount.left=tixLabelBG.right+5
+    robuxAmount.left=robuxLabelBG.right+5
+
+#Return
+def onMouseRelease(mouseX,mouseY):
+    if mouseX >= 249 and mouseX <= 380 and mouseY >= 117 and mouseY <=170:
+        return
+    elif mouseX >= 249 and mouseX <= 380 and mouseY >= 190 and mouseY <=243:
+        return
+    elif mouseX >= 249 and mouseX <= 380 and mouseY >= 263 and mouseY <=316:
+        return
+    else:
+        #Height
+        robloxIconBackground.height-=5
+        robloxIconOutside.height-=5
+        
+        #Width
+        robloxIconBackground.width-=5
+        robloxIconOutside.width-=5
+        
+        #Show Icons
+        plusMoney.visible=False
+        plusTix.visible=False
+        money.visible=False
+        tixBG.visible=False
+        tixInner.visible=False
+        tixText.visible=False
+        
+    #Reset Icon
+    robloxIconBackground.centerX=125
+    robloxIconBackground.centerY=215
+    robloxIconOutside.centerX=robloxIconBackground.centerX
+    robloxIconOutside.centerY=robloxIconBackground.centerY
+    robloxIconInside.centerX=robloxIconBackground.centerX
+    robloxIconInside.centerY=robloxIconBackground.centerY
+    moneyAmount.left=moneyLabel.right+5
+    tixAmount.left=tixLabelBG.right+5
+    robuxAmount.left=robuxLabelBG.right+5
+        
+#Rotate The Title
+def onMouseMove(mouseX,mouseY):
+    if title.rotateAngle==13:
+        controlShake.value=0
+    if title.rotateAngle==-13:
+        controlShake.value=1
+    if title.rotateAngle>=-13:
+        if controlShake.value == 1:
+            title.rotateAngle+=1
+    if title.rotateAngle<=13:
+        if controlShake.value == 0:
+            title.rotateAngle-=1</code></pre>`
+          }
+        ]
+      },
+      {
+        id: 3,
+        title: "Unit 3 Project",
+        desc: "Mouse Motion Events, Conditionals, and Helper Functions",
+        url: "https://academy.cs.cmu.edu/sharing/orchidWolf014496/embed",
+        color: "#ff7a9c", // Pink Theme
+        panels: [
+          {
+            title: "About This Project",
+            content: "This is a Tic-Tac-Toe game with a fully functioning AI opponent with a complete score system, this took me a long time to finish as the AI needed polishing and a lot of bugs, wish you have a fun time playing this Tic-Tac-Toe game."
+          },
+          {
+            title: "Why I Made This Project",
+            content: "I got this idea of making a Tic-Tac-Toe game while playing a Tic-Tac-Toe game with my friends, and I also wanted to challenge myself to coordinate with two other people to create a complex project. We made the game work with hitboxes and set variables to represent the grid as a bunch of global variables."
+          },
+          {
+            title: "Project Code",
+            content: `<pre><code>#Credits:
+# Background and icons: Aarav
+# AI: Kenneth Xie
+# Game Logic: Eric
+
+# Background
+app.background = gradient('lightSteelBlue', 'pink', start='top')
+
+# Grid
+grid = Group(Line(70,250,330,250,lineWidth=8),
+    Circle(70,250,4),
+    Circle(330,250,4),
+    Line(70,150,330,150,lineWidth=8),
+    Circle(70,150,4),
+    Circle(330,150,4),
+    Line(150,70,150,330,lineWidth=8),
+    Circle(150,70,4),
+    Circle(150,330,4),
+    Line(250,70,250,330,lineWidth=8),
+    Circle(250,70,4),
+    Circle(250,330,4))
+
+# Create Hitbox
+topLeftSquareHitbox = Rect(70,70,80,80,fill=None,border='ghostWhite',borderWidth=1,opacity=1)
+topSquareHitbox = Rect(150,70,100,80,fill=None,border='ghostWhite',borderWidth=1,opacity=1)
+topRightSquareHitbox = Rect(250,70,80,80,fill=None,border='ghostWhite',borderWidth=1,opacity=1)
+leftSquareHitbox = Rect(70,150,80,100,fill=None,border='ghostWhite',borderWidth=1,opacity=1)
+centerSquareHitbox = Rect(150,150,100,100,fill=None,border='ghostWhite',borderWidth=1,opacity=1)
+rightSquareHitbox = Rect(250,150,80,100,fill=None,border='ghostWhite',borderWidth=1,opacity=1)
+bottomLeftSquareHitbox = Rect(70,250,80,80,fill=None,border='ghostWhite',borderWidth=1,opacity=1)
+bottomSquareHitbox = Rect(150,250,100,80,fill=None,border='ghostWhite',borderWidth=1,opacity=1)
+bottomRightSquareHitbox = Rect(250,250,80,80,fill=None,border='ghostWhite',borderWidth=1,opacity=1)
+
+#Create the icons for O
+topLeftO = Group(Circle(105,105,35,fill=None,borderWidth=2,border='darkslateblue'),
+    Circle(105,105,27,fill=None,borderWidth=2,border='darkslateblue'))
+topO = Group(Circle(200,105,35,fill=None,borderWidth=2,border='darkslateblue'),
+    Circle(200,105,27,fill=None,borderWidth=2,border='darkslateblue'))
+topRightO = Group(Circle(295,105,35,fill=None,borderWidth=2,border='darkslateblue'),
+    Circle(295,105,27,fill=None,borderWidth=2,border='darkslateblue'))
+leftO = Group(Circle(105,200,35,fill=None,borderWidth=2,border='darkslateblue'),
+    Circle(105,200,27,fill=None,borderWidth=2,border='darkslateblue'))
+centerO = Group(Circle(200,200,35,fill=None,borderWidth=2,border='darkslateblue'),
+    Circle(200,200,27,fill=None,borderWidth=2,border='darkslateblue'))
+rightO = Group(Circle(295,200,35,fill=None,borderWidth=2,border='darkslateblue'),
+    Circle(295,200,27,fill=None,borderWidth=2,border='darkslateblue'))
+bottomLeftO = Group(Circle(105,295,35,fill=None,borderWidth=2,border='darkslateblue'),
+    Circle(105,295,27,fill=None,borderWidth=2,border='darkslateblue'))
+bottomO = Group(Circle(200,295,35,fill=None,borderWidth=2,border='darkslateblue'),
+    Circle(200,295,27,fill=None,borderWidth=2,border='darkslateblue'))
+bottomRightO = Group(Circle(295,295,35,fill=None,borderWidth=2,border='darkslateblue'),
+    Circle(295,295,27,fill=None,borderWidth=2,border='darkslateblue'))
+
+#Create the icons for X
+topLeftX = Group(Line(105+30,105+30,105-30,105-30,lineWidth=8,fill='crimson'),
+    Line(105+30,105-30,105-30,105+30,lineWidth=8,fill='crimson'),
+    Circle(105+30,105+30,4,fill='crimson'),
+    Circle(105-30,105+30,4,fill='crimson'),
+    Circle(105+30,105-30,4,fill='crimson'),
+    Circle(105-30,105-30,4,fill='crimson'))
+topX = Group(Line(200+30,105+30,200-30,105-30,lineWidth=8,fill='crimson'),
+    Line(200+30,105-30,200-30,105+30,lineWidth=8,fill='crimson'),
+    Circle(200+30,105+30,4,fill='crimson'),
+    Circle(200-30,105+30,4,fill='crimson'),
+    Circle(200+30,105-30,4,fill='crimson'),
+    Circle(200-30,105-30,4,fill='crimson'))
+topRightX = Group(Line(295+30,105+30,295-30,105-30,lineWidth=8,fill='crimson'),
+    Line(295+30,105-30,295-30,105+30,lineWidth=8,fill='crimson'),
+    Circle(295+30,105+30,4,fill='crimson'),
+    Circle(295-30,105+30,4,fill='crimson'),
+    Circle(295+30,105-30,4,fill='crimson'),
+    Circle(295-30,105-30,4,fill='crimson'))
+leftX = Group(Line(105+30,200+30,105-30,200-30,lineWidth=8,fill='crimson'),
+    Line(105+30,200-30,105-30,200+30,lineWidth=8,fill='crimson'),
+    Circle(105+30,200+30,4,fill='crimson'),
+    Circle(105-30,200+30,4,fill='crimson'),
+    Circle(105+30,200-30,4,fill='crimson'),
+    Circle(105-30,200-30,4,fill='crimson'))
+centerX = Group(Line(200+30,200+30,200-30,200-30,lineWidth=8,fill='crimson'),
+    Line(200+30,200-30,200-30,200+30,lineWidth=8,fill='crimson'),
+    Circle(200+30,200+30,4,fill='crimson'),
+    Circle(200-30,200+30,4,fill='crimson'),
+    Circle(200+30,200-30,4,fill='crimson'),
+    Circle(200-30,200-30,4,fill='crimson'))
+rightX = Group(Line(295+30,200+30,295-30,200-30,lineWidth=8,fill='crimson'),
+    Line(295+30,200-30,295-30,200+30,lineWidth=8,fill='crimson'),
+    Circle(295+30,200+30,4,fill='crimson'),
+    Circle(295-30,200+30,4,fill='crimson'),
+    Circle(295+30,200-30,4,fill='crimson'),
+    Circle(295-30,200-30,4,fill='crimson'))
+bottomLeftX = Group(Line(100+30,295+30,100-30,295-30,lineWidth=8,fill='crimson'),
+    Line(100+30,295-30,100-30,295+30,lineWidth=8,fill='crimson'),
+    Circle(100+30,295+30,4,fill='crimson'),
+    Circle(100-30,295+30,4,fill='crimson'),
+    Circle(100+30,295-30,4,fill='crimson'),
+    Circle(100-30,295-30,4,fill='crimson'))
+bottomX = Group(Line(200+30,295+30,200-30,295-30,lineWidth=8,fill='crimson'),
+    Line(200+30,295-30,200-30,295+30,lineWidth=8,fill='crimson'),
+    Circle(200+30,295+30,4,fill='crimson'),
+    Circle(200-30,295+30,4,fill='crimson'),
+    Circle(200+30,295-30,4,fill='crimson'),
+    Circle(200-30,295-30,4,fill='crimson'))
+bottomRightX = Group(Line(295+30,295+30,295-30,295-30,lineWidth=8,fill='crimson'),
+    Line(295+30,295-30,295-30,295+30,lineWidth=8,fill='crimson'),
+    Circle(295+30,295+30,4,fill='crimson'),
+    Circle(295-30,295+30,4,fill='crimson'),
+    Circle(295+30,295-30,4,fill='crimson'),
+    Circle(295-30,295-30,4,fill='crimson'))
+#Win Screen
+winScreen = Rect(0,0,400,400,fill=None)
+winMessage = Label('',200,150,size=50)
+tryAgain = Group(Rect(200,225,250,70,align='center',fill='cyan',border='black'),Label('Play Again?',200,225,size=25))
+scoreboard = Group(Label('Player',145,295,size=25, font='orbitron'),
+    Label('Bot',245,295,size=25,font='orbitron'),
+    Label(':',200,335,size=50,font='orbitron')
+    )
+playerScoreLabel = Label(0,160,335,size=50,font='orbitron')
+aiScoreLabel = Label(0,240,335,size=50,font='orbitron')
+
+#Instructions
+title = Label('TIC-TAC-TOE',200,30,size=50, border='black', fill=None, borderWidth=1, font='orbitron')
+whosTurn = Label('Player Move',200,70,size=30,font='orbitron')
+
+#Fix Position
+grid.centerY += 40
+topLeftSquareHitbox.centerY += 40
+topSquareHitbox.centerY += 40
+topRightSquareHitbox.centerY += 40
+leftSquareHitbox.centerY += 40
+centerSquareHitbox.centerY += 40
+rightSquareHitbox.centerY += 40
+bottomLeftSquareHitbox.centerY += 40 
+bottomSquareHitbox.centerY += 40
+bottomRightSquareHitbox.centerY += 40
+topLeftO.centerY += 40
+topO.centerY += 40
+topRightO.centerY += 40
+leftO.centerY += 40
+centerO.centerY += 40
+rightO.centerY += 40
+bottomLeftO.centerY += 40
+bottomO.centerY += 40
+bottomRightO.centerY += 40
+topLeftX.centerY += 40
+topX.centerY += 40 
+topRightX.centerY += 40
+leftX.centerY += 40
+centerX.centerY += 40
+rightX.centerY += 40
+bottomLeftX.centerY += 40
+bottomX.centerY += 40
+bottomRightX.centerY += 40
+
+# Reset Game
+def resetGame():
+    app.background = gradient('lightSteelBlue', 'pink', start='top')
+    app.topLeftSquare = '?'
+    app.topSquare = '?'
+    app.topRightSquare = '?'
+    app.rightSquare = '?'
+    app.bottomRightSquare = '?'
+    app.bottomSquare = '?'
+    app.bottomLeftSquare = '?'
+    app.leftSquare = '?'
+    app.centerSquare = '?'
+    app.playerIcon = 'X'
+    app.aiIcon = 'O'
+    app.aiNextMove = '?'
+    app.didAIMove = False
+    app.didPlayerMove = False
+    app.aiRandom = 0
+    app.testSquare = 0
+    app.game = True
+    app.winScreen = False
+    app.pressable = False
+    topLeftO.visible = False
+    topO.visible = False
+    topRightO.visible = False
+    leftO.visible = False
+    centerO.visible = False
+    rightO.visible = False
+    bottomLeftO.visible = False
+    bottomO.visible = False
+    bottomRightO.visible = False
+    topLeftX.visible = False
+    topX.visible = False
+    topRightX.visible = False
+    leftX.visible = False
+    centerX.visible = False
+    rightX.visible = False
+    bottomLeftX.visible = False
+    bottomX.visible = False
+    bottomRightX.visible = False
+    tryAgain.visible = False
+    winMessage.visible = False
+    winScreen.visible = False
+    whosTurn.value = 'Player Move'
+    scoreboard.visible = False
+    playerScoreLabel.visible = False
+    aiScoreLabel.visible = False
+
+resetGame()
+
+#AI Detect Stuff
+def findTwoInARow(icon):
+    # % % ?
+    # - - -
+    # - - -
+    if app.topLeftSquare == icon and app.topSquare == icon and app.topRightSquare == '?':
+        return 'topRightSquare'
+    # % ? %
+    # - - -
+    # - - -
+    elif app.topLeftSquare == icon and app.topRightSquare == icon and app.topSquare == '?':
+        return 'topSquare'
+    # ? % %
+    # - - -
+    # - - -
+    elif app.topRightSquare == icon and app.topSquare == icon and app.topLeftSquare == '?':
+        return 'topLeftSquare'
+    # - - -
+    # % % ?
+    # - - -
+    elif app.leftSquare == icon and app.centerSquare == icon and app.rightSquare == '?':
+        return 'rightSquare'
+    # - - -
+    # % ? %
+    # - - -
+    elif app.rightSquare == icon and app.leftSquare == icon and app.centerSquare == '?':
+        return 'centerSquare'
+    # - - -
+    # ? % %
+    # - - -
+    elif app.rightSquare == icon and app.centerSquare == icon and app.leftSquare == '?':
+        return 'leftSquare'
+    # - - -
+    # - - -
+    # % % ?
+    elif app.bottomLeftSquare == icon and app.bottomSquare == icon and app.bottomRightSquare == '?':
+        return 'bottomRightSquare'
+    # - - -
+    # - - -
+    # % ? %
+    elif app.bottomRightSquare == icon and app.bottomLeftSquare == icon and app.bottomSquare == '?':
+        return 'bottomSquare'
+    # - - -
+    # - - -
+    # ? % %
+    elif app.bottomRightSquare == icon and app.bottomSquare == icon and app.bottomLeftSquare == '?':
+        return 'bottomLeftSquare'
+    # % - -
+    # % - -
+    # ? - -
+    elif app.topLeftSquare == icon and app.leftSquare == icon and app.bottomLeftSquare == '?':
+        return 'bottomLeftSquare'
+    # % - -
+    # ? - -
+    # % - -
+    elif app.topLeftSquare == icon and app.bottomLeftSquare == icon and app.leftSquare == '?':
+        return 'leftSquare'
+    # ? - -
+    # % - -
+    # % - -
+    elif app.bottomLeftSquare == icon and app.leftSquare == icon and app.topLeftSquare == '?':
+        return 'topLeftSquare'
+    # - % -
+    # - % -
+    # - ? -
+    elif app.topSquare == icon and app.centerSquare == icon and app.bottomSquare == '?':
+        return 'bottomSquare'
+    # - % -
+    # - ? -
+    # - % -
+    elif app.bottomSquare == icon and app.topSquare == icon and app.centerSquare == '?':
+        return 'centerSquare'
+    # - ? -
+    # - % -
+    # - % -
+    elif app.bottomSquare == icon and app.centerSquare == icon and app.topSquare == '?':
+        return 'topSquare'
+    # - - %
+    # - - %
+    # - - ?
+    elif app.topRightSquare == icon and app.rightSquare == icon and app.bottomRightSquare == '?':
+        return 'bottomRightSquare'
+    # - - %
+    # - - ?
+    # - - %
+    elif app.topRightSquare == icon and app.bottomRightSquare == icon and app.rightSquare == '?':
+        return 'rightSquare'
+    # - - ?
+    # - - %
+    # - - %
+    elif app.bottomRightSquare == icon and app.rightSquare == icon and app.topRightSquare == '?':
+        return 'topRightSquare'
+    # % - -
+    # - % -
+    # - - ?
+    elif app.topLeftSquare == icon and app.centerSquare == icon and app.bottomRightSquare == '?':
+        return 'bottomRightSquare'
+    # % - -
+    # - ? -
+    # - - %
+    elif app.topLeftSquare == icon and app.bottomRightSquare == icon and app.centerSquare == '?':
+        return 'centerSquare'
+    # ? - -
+    # - % -
+    # - - %
+    elif app.bottomRightSquare == icon and app.centerSquare == icon and app.topLeftSquare == '?':
+        return 'topLeftSquare'
+    # - - %
+    # - % -
+    # ? - -
+    elif app.topRightSquare == icon and app.centerSquare == icon and app.bottomLeftSquare == '?':
+        return 'bottomLeftSquare'
+    # - - %
+    # - ? -
+    # % - -
+    elif app.topRightSquare == icon and app.bottomLeftSquare == icon and app.centerSquare == '?':
+        return 'centerSquare'
+    # - - ?
+    # - % -
+    # % - -
+    elif app.bottomLeftSquare == icon and app.centerSquare == icon and app.topRightSquare == '?':
+        return 'topRightSquare'
+    else:
+        return None
+        
+#AI Move
+def aiMove(square):
+    setattr(app,square,'O' if app.playerIcon == 'X' else 'X')
+
+def aiDecide():
+    move = findTwoInARow(app.aiIcon)
+    if move == None:
+        move = findTwoInARow(app.playerIcon)
+    sleep(0.0000001)
+    if move == None:
+        randomChoose()
+    else:
+        aiMove(move)
+        
+#AI Random Selection
+def randomChoose():
+    app.aiRandom = 0
+    app.testSquare = 0
+    if app.centerSquare == '?':
+        aiMove('centerSquare')
+    else:
+        app.aiRandom = randrange(1,9)
+        if app.aiRandom == 1:
+            if app.topLeftSquare == '?':
+                app.testSquare = 1
+                aiMove('topLeftSquare')
+            else:
+                firstEmpty()
+        elif app.aiRandom == 2:
+            if app.topSquare == '?':
+                app.testSquare = 2
+                aiMove('topSquare')
+            else:
+                firstEmpty()
+        elif app.aiRandom == 3:
+            if app.topRightSquare == '?':
+                app.testSquare = 3
+                aiMove('topRightSquare')
+            else:
+                firstEmpty()
+        elif app.aiRandom == 4:
+            if app.rightSquare == '?':
+                app.testSquare = 4
+                aiMove('rightSquare')
+            else:
+                firstEmpty()
+        elif app.aiRandom == 5:
+            if app.bottomRightSquare == '?':
+                app.testSquare = 5
+                aiMove('bottomRightSquare')
+            else:
+                firstEmpty()
+        elif app.aiRandom == 6:
+            if app.bottomSquare == '?':
+                app.testSquare = 6
+                aiMove('bottomSquare')
+            else:
+                firstEmpty()
+        elif app.aiRandom == 7:
+            if app.bottomLeftSquare == '?':
+                app.testSquare = 7
+                aiMove('bottomLeftSquare')
+            else:
+                firstEmpty()
+        elif app.aiRandom == 8:
+            if app.leftSquare == '?':
+                app.testSquare = 8
+                aiMove('leftSquare')
+            else:
+                firstEmpty()
+            
+def firstEmpty():
+    if app.topLeftSquare == '?':
+        aiMove('topLeftSquare')
+    elif app.topSquare == '?':
+        aiMove('topSquare')
+    elif app.topRightSquare == '?':
+        aiMove('topRightSquare')
+    elif app.leftSquare == '?':
+        aiMove('leftSquare')
+    elif app.centerSquare == '?':
+        aiMove('centerSquare')
+    elif app.rightSquare == '?':
+        aiMove('rightSquare')
+    elif app.bottomLeftSquare == '?':
+        aiMove('bottomLeftSquare')
+    elif app.bottomSquare == '?':
+        aiMove('bottomSquare')
+    elif app.bottomRightSquare == '?':
+        aiMove('bottomRightSquare')
+
+def winX():
+    playerScoreLabel.value += 1
+    app.background = 'lime'
+    winScreen.visible = True
+    winScreen.fill = 'lime'
+    winScreen.toFront()
+    winMessage.visible = True
+    winMessage.value = 'Player Won!'
+    winMessage.toFront()
+    tryAgain.visible = True
+    tryAgain.toFront()
+    scoreboard.visible = True
+    playerScoreLabel.visible = True
+    aiScoreLabel.visible = True
+    scoreboard.toFront()
+    playerScoreLabel.toFront()
+    aiScoreLabel.toFront()
+    app.pressable = True
+    app.winScreen = True
+    
+
+    
+def winO():
+    aiScoreLabel.value += 1
+    app.background = 'crimson'
+    winScreen.visible = True
+    winScreen.fill = 'crimson'
+    winScreen.toFront()
+    winMessage.visible = True
+    winMessage.value = 'Bot Won!'
+    winMessage.toFront()
+    tryAgain.visible = True
+    tryAgain.toFront()
+    scoreboard.visible = True
+    playerScoreLabel.visible = True
+    aiScoreLabel.visible = True
+    scoreboard.toFront()
+    playerScoreLabel.toFront()
+    aiScoreLabel.toFront()
+    app.pressable = True
+    app.winScreen = True
+    
+    
+def tie():
+    app.background = 'gold'
+    winScreen.visible = True
+    winScreen.fill = 'gold'
+    winScreen.toFront()
+    winMessage.visible = True
+    winMessage.value = 'Tie!'
+    winMessage.toFront()
+    tryAgain.visible = True
+    tryAgain.toFront()
+    scoreboard.visible = True
+    playerScoreLabel.visible = True
+    aiScoreLabel.visible = True
+    scoreboard.toFront()
+    playerScoreLabel.toFront()
+    aiScoreLabel.toFront()
+    app.pressable = True
+    app.winScreen = True
+
+def onMousePress(mouseX,mouseY):
+    if topLeftSquareHitbox.contains(mouseX,mouseY):
+        if app.didPlayerMove == False and app.topLeftSquare != 'O' and app.topLeftSquare != 'X':
+            app.topLeftSquare = app.playerIcon
+            app.didPlayerMove = True
+    elif topSquareHitbox.contains(mouseX,mouseY):
+        if app.didPlayerMove == False and app.topSquare != 'O' and app.topSquare != 'X':
+            app.topSquare = app.playerIcon
+            app.didPlayerMove = True
+    elif topRightSquareHitbox.contains(mouseX,mouseY):
+        if app.didPlayerMove == False and app.topRightSquare != 'O' and app.topRightSquare != 'X':
+            app.topRightSquare = app.playerIcon
+            app.didPlayerMove = True
+    elif leftSquareHitbox.contains(mouseX,mouseY):
+        if app.didPlayerMove == False and app.leftSquare != 'O' and app.leftSquare != 'X':
+            app.leftSquare = app.playerIcon
+            app.didPlayerMove = True
+    elif centerSquareHitbox.contains(mouseX,mouseY):
+        if app.didPlayerMove == False and app.centerSquare != 'O' and app.centerSquare != 'X':
+            app.centerSquare = app.playerIcon
+            app.didPlayerMove = True
+    elif rightSquareHitbox.contains(mouseX,mouseY):
+        if app.didPlayerMove == False and app.rightSquare != 'O'and app.rightSquare != 'X':
+            app.rightSquare = app.playerIcon
+            app.didPlayerMove = True
+    elif bottomLeftSquareHitbox.contains(mouseX,mouseY):
+        if app.didPlayerMove == False and app.bottomLeftSquare != 'O' and app.bottomLeftSquare != 'X':
+            app.bottomLeftSquare = app.playerIcon
+            app.didPlayerMove = True
+    elif bottomSquareHitbox.contains(mouseX,mouseY):
+        if app.didPlayerMove == False and app.bottomSquare != 'O' and app.bottomSquare != 'X':
+            app.bottomSquare = app.playerIcon
+            app.didPlayerMove = True
+    elif bottomRightSquareHitbox.contains(mouseX,mouseY):
+        if app.didPlayerMove == False and app.bottomRightSquare != 'O' and app.bottomRightSquare != 'X':
+            app.bottomRightSquare = app.playerIcon
+            app.didPlayerMove = True
+    if tryAgain.contains(mouseX,mouseY) and app.pressable == True:
+        resetGame()
+            
+        
+def onMouseRelease(mouseX,mouseY):
+    placeX()
+    sleep(0.001)
+    if app.winScreen == False:
+        checkWin()
+        if app.didPlayerMove == True and app.winScreen == False:
+            whosTurn.value = 'AI Move'
+            sleep(0.001)
+            aiDecide()
+            placeO()
+            app.didPlayerMove = False
+            sleep(0.001)
+            checkWin()
+            whosTurn.value = 'Player Move'
+
+def placeO():
+    if app.topLeftSquare == 'O':
+        topLeftO.visible = True
+    if app.topSquare == 'O':
+        topO.visible = True
+    if app.topRightSquare == 'O':
+        topRightO.visible = True
+    if app.leftSquare == 'O':
+        leftO.visible = True
+    if app.centerSquare == 'O':
+        centerO.visible = True
+    if app.rightSquare == 'O':
+        rightO.visible = True
+    if app.bottomLeftSquare == 'O':
+        bottomLeftO.visible = True
+    if app.bottomSquare == 'O':
+        bottomO.visible = True
+    if app.bottomRightSquare == 'O':
+        bottomRightO.visible = True
+        
+def placeX():
+    if app.topLeftSquare == 'X':
+        topLeftX.visible = True
+    if app.topSquare == 'X':
+        topX.visible = True
+    if app.topRightSquare == 'X':
+        topRightX.visible = True
+    if app.leftSquare == 'X':
+        leftX.visible = True
+    if app.centerSquare == 'X':
+        centerX.visible = True
+    if app.rightSquare == 'X':
+        rightX.visible = True
+    if app.bottomLeftSquare == 'X':
+        bottomLeftX.visible = True
+    if app.bottomSquare == 'X':
+        bottomX.visible = True
+    if app.bottomRightSquare == 'X':
+        bottomRightX.visible = True
+
+def checkWin():
+    # X - -
+    # X - -
+    # X - -
+    if app.topLeftSquare == app.leftSquare == app.bottomLeftSquare == 'X':
+        winX()
+        app.game = False
+    elif app.topLeftSquare == app.leftSquare == app.bottomLeftSquare == 'O':
+        winO()
+        app.game = False
+    # - - X
+    # - - X
+    # - - X
+    if app.rightSquare == app.bottomRightSquare == app.topRightSquare == 'X':
+        winX()
+        app.game = False
+    elif app.rightSquare == app.bottomRightSquare == app.topRightSquare == 'O':
+        winO()
+        app.game = False
+    # - X -
+    # - X -
+    # - X -
+    if app.topSquare == app.bottomSquare == app.centerSquare == 'X':
+        winX()
+        app.game = False
+    elif app.topSquare == app.bottomSquare == app.centerSquare == 'O':
+        winO()
+        app.game = False
+    # X X X
+    # - - -
+    # - - -
+    if app.topLeftSquare == app.topSquare == app.topRightSquare == 'X':
+        winX()
+        app.game = False
+    elif app.topLeftSquare == app.topSquare == app.topRightSquare == 'O':
+        winO()
+        app.game = False
+    # - - -
+    # X X X
+    # - - -
+    if app.leftSquare == app.centerSquare == app.rightSquare == 'X':
+        winX()
+        app.game = False
+    elif app.leftSquare == app.centerSquare == app.rightSquare == 'O':
+        winO()
+        app.game = False
+    # - - -
+    # - - -
+    # X X X
+    if app.bottomLeftSquare == app.bottomSquare == app.bottomRightSquare == 'X':
+        winX()
+        app.game = False
+    elif app.bottomLeftSquare == app.bottomSquare == app.bottomRightSquare == 'O':
+        winO()
+        app.game = False
+    # - - X
+    # - X -
+    # X - -
+    if app.bottomLeftSquare == app.centerSquare == app.topRightSquare == 'X':
+        winX()
+        app.game = False
+    elif app.bottomLeftSquare == app.centerSquare == app.topRightSquare == 'O':
+        winO()
+        app.game = False
+    # X - -
+    # - X -
+    # - - X
+    if app.centerSquare == app.bottomRightSquare == app.topLeftSquare == 'X':
+        winX()
+        app.game = False
+    elif app.centerSquare == app.bottomRightSquare == app.topLeftSquare == 'O':
+        winO()
+        app.game = False
+    #When no one wins
+    if app.topLeftSquare != '?' and app.topSquare != '?' and app.topRightSquare != '?' and app.leftSquare != '?' and app.centerSquare != '?' and app.rightSquare != '?' and app.bottomLeftSquare != '?' and app.bottomSquare != '?' and app.bottomRightSquare != '?' and app.game != False:
+        tie()
+        app.game = False</code></pre>`
+          }
+        ]
+      }
+    ];
+
+    const dashboardGrid = document.getElementById('dashboard-grid');
+    const dashboardView = document.getElementById('dashboard-view');
+    const viewerView = document.getElementById('viewer-view');
+    const iframeTarget = document.getElementById('iframe-target');
+    const viewerTitle = document.getElementById('viewer-title');
+    const pageTitle = document.getElementById('page-title');
+    const panelsContainer = document.getElementById('panels-container');
+
+    function renderDashboard() {
+      dashboardGrid.innerHTML = ''; 
+      units.forEach(unit => {
+        const card = document.createElement('div');
+        card.className = 'menu-card';
+        card.style.setProperty('--accent', unit.color);
+        card.innerHTML = `
+          <div class="menu-card-badge">${unit.id}</div>
+          <h2>${unit.title}</h2>
+          <p>${unit.desc}</p>
+          <div class="action-text">Launch Project <span>→</span></div>
+        `;
+        card.onclick = () => openViewer(unit);
+        dashboardGrid.appendChild(card);
+      });
+    }
+
+    function openViewer(unit) {
+      viewerTitle.textContent = unit.title;
+      pageTitle.textContent = unit.title + " | CMU Academy"; 
+      
+      iframeTarget.innerHTML = `
+        <iframe src="${unit.url}" title="${unit.title}" loading="lazy"></iframe>
+      `;
+
+      panelsContainer.innerHTML = ''; 
+      
+      if (unit.panels && unit.panels.length > 0) {
+        unit.panels.forEach(panel => {
+          const panelEl = document.createElement('div');
+          panelEl.className = 'info-panel';
+          panelEl.style.setProperty('--accent', unit.color);
+          
+          panelEl.innerHTML = `
+            <h3 class="info-panel-title">${panel.title}</h3>
+            <div class="info-panel-content">${panel.content}</div>
+          `;
+          
+          panelsContainer.appendChild(panelEl);
+        });
+      }
+
+      dashboardView.classList.remove('active');
+      viewerView.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function closeViewer() {
+      iframeTarget.innerHTML = ''; 
+      pageTitle.textContent = "CMU Academy Project Overview";
+      viewerView.classList.remove('active');
+      dashboardView.classList.add('active');
+    }
+
+    renderDashboard();
+  </script>
+</body>
+</html>
